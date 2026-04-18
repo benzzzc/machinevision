@@ -13,9 +13,9 @@ TRAIN_DIR = os.path.join(DATASET_ROOT, "train")
 VAL_DIR = os.path.join(DATASET_ROOT, "val") 
 TEST_DIR = os.path.join(DATASET_ROOT, "test") 
 
-# B7 Parameters - IMPORTANT: B7 needs 600x600
+# Parameters for the model
 IMG_SIZE = 600
-BATCH_SIZE = 4 # B7 is massive; if you get a "Memory Error" (OOM), lower this to 2 or 1.
+BATCH_SIZE = 4 # NOTE B7 is massive; if you get a "Memory Error" (OOM), lower this to 2 or 1.
 EPOCHS = 30
 
 # Load the training data
@@ -77,7 +77,7 @@ def build_model():
     x = layers.BatchNormalization()(x)
     x = layers.Dropout(0.3)(x) # Slightly higher dropout for B7
     
-    outputs = layers.Dense(NUM_CLASSES, activation="softmax")(x)
+    outputs = layers.Dense(NUM_CLASSES, activation="softmax")(x) # not a regression model but returns the probability of the classes out of 1.0
 
     model = models.Model(inputs, outputs)
     return model
@@ -91,7 +91,7 @@ model.compile(
     metrics=["accuracy"]
 )
 
-# Early Stopping watching the ACTUAL validation set
+# Built in early stopping when the validation loss reaches a point of no return
 early_stop = EarlyStopping(
     monitor='val_loss', 
     patience=7, 
@@ -106,7 +106,7 @@ history = model.fit(
     callbacks=[early_stop]
 )
 
-# Final Evaluation on the TEST set (the one we never looked at)
+# Evaluate the model based on unseen test data 
 print("\n Testing this shit...")
 test_loss, test_acc = model.evaluate(test_ds)
 print(f"Test Accuracy: {test_acc:.4f}")
