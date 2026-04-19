@@ -3,6 +3,7 @@
 # NOTE maybe change the model from .keras to ONYX, also from ^^ see if it is worth adding depth to crop out the background, maybe useless as background different colour 
 # or change to HSV... 
 # should work for all realsense with colour lense
+# CONVERT models to .trt
 
 import cv2
 import numpy as np
