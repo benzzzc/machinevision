@@ -1,3 +1,4 @@
+# NOTE add class weights
 import tensorflow as tf
 from tensorflow.keras import layers, models, optimizers
 from tensorflow.keras.applications import EfficientNetB0   
