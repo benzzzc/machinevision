@@ -13,10 +13,9 @@ import tensorflow as tf
 # Load the model
 MODEL_PATH = 'model.keras' # Change the name of the model
 model = tf.keras.models.load_model(MODEL_PATH)
-CLASS_NAMES = ['Soil', 'Soily', 'Soilest'] 
-IMG_SIZE = 224
+CLASS_NAMES = ['Soil', 'Soily', 'Soilest'] #NOTE change this jawn 
+IMG_SIZE = 600
 
-yolo_model = YOLO('best.pt')
 
 # Configure colour streams
 pipeline = rs.pipeline()
@@ -70,28 +69,6 @@ try:
 
         display_text = f"Context: {predicted_label} ({soil_confidence:.2f})"
         cv2.putText(color_image, display_text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 0), 2)
-
-        # Yolo
-        results = yolo_model(color_image, verbose=False)
-        
-        for result in results:
-            for box in result.boxes:
-                # Get the pixel boundaries and confidence score
-                x1, y1, x2, y2 = map(int, box.xyxy[0])
-                artifact_confidence = float(box.conf[0])
-                
-                # Only draw bounding box if over 60% confidence
-                if artifact_confidence < 0.60:
-                    continue
-                    
-                # Draw a green bounding box around the artifact
-                cv2.rectangle(color_image, (x1, y1), (x2, y2), (0, 255, 0), 2)
-                
-                # Write "Artifact" and the confidence score right above the box
-                cv2.putText(color_image, f"Artifact {artifact_confidence:.2f}", (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 0), 2)
-
-        # Show output on monitor
-        cv2.imshow('RealSense AI Vision Pipeline', color_image)
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
